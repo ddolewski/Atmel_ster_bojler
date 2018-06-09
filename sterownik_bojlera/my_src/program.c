@@ -45,9 +45,9 @@ void programBoilerHandler(void)
 		}
 		else
 		{
-			if ((programCopy1.hourOff != programCopy2.hourOff) && (programCopy1.hourOn != programCopy2.hourOn))
+			if ((programCopy1.hourOff != programCopy2.hourOff) && (programCopy1.hourOn != programCopy2.hourOn)) // programy nie moga byc takie same
 			{
-				if ((programCopy1.hourOn < programCopy1.hourOff) && (program2Active == FALSE))
+				if ((programCopy1.hourOn < programCopy1.hourOff) && (program2Active == FALSE)) // czas on i off musza byc rozne ( off wiekszy od on)
 				{
 					if ((localTime.hour >= programCopy1.hourOn)		&& 
 						(localTime.hour < programCopy1.hourOff)		&& 
@@ -64,7 +64,7 @@ void programBoilerHandler(void)
 						//if (program2Active == FALSE)
 						//{
 							program1Active = FALSE;
-							UART_PutString(SC"Wylaczam bojler (program1)\n\r");
+							//UART_PutString(SC"Wylaczam bojler (program1)\n\r");
 							programType = PROGRAM_NONE;
 							xBoilerState = TURN_OFF;
 							programBoilerOn(FALSE);							
@@ -89,7 +89,7 @@ void programBoilerHandler(void)
 						//if (program1Active == FALSE)
 						//{
 							program2Active = FALSE;
-							UART_PutString(SC"Wylaczam bojler (program2)\n\r");
+							//UART_PutString(SC"Wylaczam bojler (program2)\n\r");
 							programType = PROGRAM_NONE;
 							xBoilerState = TURN_OFF;
 							programBoilerOn(FALSE);							
@@ -105,11 +105,13 @@ static void programBoilerOn(bool_t xTurnOn)
 {
 	if (xTurnOn == TRUE)
 	{
-		PORTD |= 1 << BOILER;
+		//PORTD |= 1 << BOILER;
+		PORTD &= ~ (1 << BOILER);
 	}
 	else
 	{
-		PORTD &= ~ (1 << BOILER);
+		//PORTD &= ~ (1 << BOILER);
+		PORTD |= 1 << BOILER;
 	}
 }
 
@@ -156,39 +158,44 @@ void programReadConfiguration(config_type_t xConfigType)
 	}
 	else
 	{
-		UART_PutString(SC"bledy rodzaj konfiguracji do zapisu\n\r");
+		UART_PutString(SC"bledy rodzaj konfiguracji do odczytu\n\r");
 	}	
 	
 	SREG = sreg_save;
 	sei();
 
-	//for (uint8_t i = 0; i < 14; i++)
-	//{
-		//UART_PutString(SC"program ");
-		//systimeDelayMs(20);
-		//UART_PutInt(i, 10);
-		//systimeDelayMs(20);
-		//UART_PutInt(programBuff[i].hourOn, 10);
-		//systimeDelayMs(20);
-		//UART_PutInt(programBuff[i].hourOff, 10);
-		//systimeDelayMs(20);
-		//UART_PutInt(programBuff[i].weekDay, 10);
-	//}
-	
-	for (uint8_t i = 0; i < 3; i++)
+	if (xConfigType == CONFIG_TARIFF)
 	{
-		systimeDelayMs(5);
-		UART_PutString(SC"taryfa ");
-		systimeDelayMs(5);
-		UART_PutInt(i, 10);
-		systimeDelayMs(5);
-		UART_PutInt(tariffBuff[i].hourOff, 10);
-		systimeDelayMs(5);
-		UART_PutInt(tariffBuff[i].hourOn, 10);
-		systimeDelayMs(5);
-		UART_PutInt(tariffBuff[i].weekDayFrom, 10);
-		systimeDelayMs(5);
-		UART_PutInt(tariffBuff[i].weekDayTo, 10);
+		for (uint8_t i = 0; i < 3; i++)
+		{
+			systimeDelayMs(5);
+			UART_PutString(SC"taryfa ");
+			systimeDelayMs(5);
+			UART_PutInt(i, 10);
+			systimeDelayMs(5);
+			UART_PutInt(tariffBuff[i].hourOff, 10);
+			systimeDelayMs(5);
+			UART_PutInt(tariffBuff[i].hourOn, 10);
+			systimeDelayMs(5);
+			UART_PutInt(tariffBuff[i].weekDayFrom, 10);
+			systimeDelayMs(5);
+			UART_PutInt(tariffBuff[i].weekDayTo, 10);
+		}
+	}
+	else if (xConfigType == CONFIG_PROGRAMS)
+	{
+		for (uint8_t i = 0; i < 14; i++)
+		{
+			UART_PutString(SC"program ");
+			systimeDelayMs(20);
+			UART_PutInt(i, 10);
+			systimeDelayMs(20);
+			UART_PutInt(programBuff[i].hourOn, 10);
+			systimeDelayMs(20);
+			UART_PutInt(programBuff[i].hourOff, 10);
+			systimeDelayMs(20);
+			UART_PutInt(programBuff[i].weekDay, 10);
+		}
 	}
 }
 
@@ -258,12 +265,12 @@ uint8_t programReadMode(void)
 	sei();
 	SREG = sreg;
 	
-	//UART_PutString(SC"odczyt trybu pracy\n\r");
-	//UART_PutInt(index, 10);
+	UART_PutString(SC"odczyt trybu pracy\n\r");
+	UART_PutInt(index, 10);
 	return index;
 }
 
-void programDeleteProgram(void)
+void programDeleteEEPROM(void)
 {
 	uint8_t sreg, i;
 	uint16_t addr;

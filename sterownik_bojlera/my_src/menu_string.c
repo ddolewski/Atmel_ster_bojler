@@ -80,7 +80,7 @@ const char string_60[] PROGMEM = "P13";
 const char string_61[] PROGMEM = "NDZ WYL. O GODZ:";
 const char string_62[] PROGMEM = "P14";
 
-const char string_63[] PROGMEM = "OCZEKIWANIE...";
+const char string_63[] PROGMEM = "OCZEKIWANIE..";
 
 const char string_64[] PROGMEM = "USTAW TARYFY";
 const char string_65[] PROGMEM = "TARYFA1 WL. O:";

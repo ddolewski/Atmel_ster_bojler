@@ -87,7 +87,7 @@ void programReadConfiguration(config_type_t xConfigType);
 void programReadProgramsPerDay(void);
 uint8_t programReadMode(void);
 void programSaveMode(uint8_t xIndex);
-void programDeleteProgram(void);
+void programDeleteEEPROM(void);
 
 void programTEST_WRITE_EEPROM(void);
 

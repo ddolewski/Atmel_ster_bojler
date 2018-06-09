@@ -49,7 +49,7 @@ typedef struct
 
 uint8_t timeLeapYearCheck(uint16_t year_to_test);
 void timeTimestampToTime(uint32_t xTimestamp, time_complex_t * xTime);
-void timeTimeToTimestamp(time_complex_t * xTime, uint32_t * xTimestamp);
+void timeTimeToTimestamp(const time_complex_t * xTime, uint32_t * xTimestamp);
 uint8_t timeCalcDayWeek(const time_complex_t * xTime);
 uint8_t timeMaxDayOfMonthGet(uint8_t xMonth, uint16_t  xYear);
 uint8_t timeUtcToLocalConv(const time_complex_t * xInUtcTime, time_complex_t * xOutLocalTime);

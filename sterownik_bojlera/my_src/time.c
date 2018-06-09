@@ -138,7 +138,7 @@ void timeTimestampToTime(uint32_t xTimestamp, time_complex_t * xTime)
 // xTimestamp/out: wyjsciowy stempel czasowy
 // return: 	void
 //-----------------------------------------------------------------------------
-void timeTimeToTimestamp(time_complex_t * xTime, uint32_t * xTimestamp)
+void timeTimeToTimestamp(const time_complex_t * xTime, uint32_t * xTimestamp)
 {
 	uint32_t timestamp = 0;
 	uint8_t leapYear = 0;

@@ -20,17 +20,27 @@ static time_complex_t rtcUtcTime;
 int main(void)
 {
 	Peripheral_Init();
-	
+	//programDeleteEEPROM(); //test
+		programCopy1.hourOn = 13;
+		programCopy1.hourOff = 15;
+		programCopy1.weekDay = 5;
+		
+		programCopy2.hourOn = 20;
+		programCopy2.hourOff = 22;
+		programCopy2.weekDay = 5;
     while (ALWAYS) 
     {
-		if (systimeTimeoutControl(&readRtcTimer, 1000))
+		if (systimeTimeoutControl(&readRtcTimer, 500))
 		{
 			PCF8563_ReadTime(&rtcUtcTime);
 			timeUtcToLocalConv(&rtcUtcTime, &localTime);
 			displayMakeTimeString(timeString, &localTime);
 			displayMakeDateString(dateString, &localTime);
 			displayWeekDayConvert(localTime.wday, weekDayString);
-			//programReadProgramsPerDay();
+			if (localTime.hour == 0 && localTime.min == 0 && localTime.sec == 0) // co zmiane dnia wczytaj na nowo programy 
+			{
+				programReadProgramsPerDay();
+			}
 		}
 			
 		displayMainCounter(&dispDta);
@@ -38,7 +48,7 @@ int main(void)
 		displayShowPage(&dispDta);
 		
 		menuSwitchHandler();
-		menuFunctionHandler();
+		//menuFunctionHandler();
 		programBoilerHandler();
 		
 #ifdef DEBUG_SYSTIME
@@ -53,7 +63,8 @@ int main(void)
 static void boilerInit(void)
 {
 	DDRD |= (1 << BOILER);	//jako wyjscie
-	PORTD &= ~ (1 << BOILER);
+	//PORTD &= ~ (1 << BOILER);
+	PORTD |= (1 << BOILER);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 static void Peripheral_Init(void)
@@ -68,19 +79,21 @@ static void Peripheral_Init(void)
 
 	USART_Init(__UBRR);
 
-	//programReadConfiguration(CONFIG_PROGRAMS);
+	programReadConfiguration(CONFIG_PROGRAMS);
 	//programReadConfiguration(CONFIG_TARIFF);
-	manualControl = programReadMode();
+	//manualControl = programReadMode();
 	
-	if (xBoilerState != TRUE && xBoilerState != FALSE)
-	{
-		xBoilerState = FALSE;
-	}
+	//if (xBoilerState != TURN_OFF && xBoilerState != TURN_ON)
+	//{
+		//xBoilerState = TURN_OFF;
+		//UART_PutString("xBoilerState != TRUE && xBoilerState != FALSE\r\n");
+	//}
 	
-	if (manualControl == 255)
-	{
-		manualControl = FALSE;
-	}
+	//if (manualControl == 255)
+	//{
+		//manualControl = FALSE;
+		//UART_PutString("manualControl = 255\r\n");
+	//}
 	
 	SCL_SDA_High;
 	TWI_Init(200);
@@ -100,28 +113,28 @@ static void Peripheral_Init(void)
 	xBoilerState = TURN_OFF;
 	manualControl = FALSE;
 	
-	tariffBuff[0].hourOff = 10;
-	tariffBuff[0].hourOn = 9;
-	tariffBuff[0].weekDayFrom = 0;
-	tariffBuff[0].weekDayTo = 4;
-	
-	tariffBuff[1].hourOff = 23;
-	tariffBuff[1].hourOn = 22;
-	tariffBuff[1].weekDayFrom = 0;
-	tariffBuff[1].weekDayTo = 4;
-	
-	tariffBuff[2].hourOff = 12;
-	tariffBuff[2].hourOn = 11;
-	tariffBuff[2].weekDayFrom = 4;
-	tariffBuff[2].weekDayTo = 6;
-	
-	programCopy1.hourOn = 9;
-	programCopy1.hourOff = 10;
-	programCopy1.weekDay = 4;
-	
-	programCopy2.hourOn = 11;
-	programCopy2.hourOff = 12;
-	programCopy2.weekDay = 4;
+	//tariffBuff[0].hourOff = 15;
+	//tariffBuff[0].hourOn = 13;
+	//tariffBuff[0].weekDayFrom = 0;
+	//tariffBuff[0].weekDayTo = 4;
+	//
+	//tariffBuff[1].hourOff = 6;
+	//tariffBuff[1].hourOn = 22;
+	//tariffBuff[1].weekDayFrom = 0;
+	//tariffBuff[1].weekDayTo = 4;
+	//
+	//tariffBuff[2].hourOff = 6;
+	//tariffBuff[2].hourOn = 22;
+	//tariffBuff[2].weekDayFrom = 4;
+	//tariffBuff[2].weekDayTo = 0;
+	//
+	//programCopy1.hourOn = 13;
+	//programCopy1.hourOff = 15;
+	//programCopy1.weekDay = 5;
+	//
+	//programCopy2.hourOn = 20;
+	//programCopy2.hourOff = 22;
+	//programCopy2.weekDay = 5;
 	
 	dispDta.page = 2;
 	dispDta.pageCounter = 0;

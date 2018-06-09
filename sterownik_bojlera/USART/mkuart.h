@@ -11,8 +11,8 @@
 #include "global.h"
 #include "time.h"
 
-#define F_CPU			8000000
-#define UART_BAUD		38400			// tu definiujemy interesuj¹c¹ nas prêdkoœæ
+//#define F_CPU			8000000
+#define UART_BAUD		57600			// tu definiujemy interesuj¹c¹ nas prêdkoœæ
 #define __UBRR F_CPU/16/UART_BAUD-1		// obliczamy UBRR dla U2X=0
 
 #define UART_TX_BUF_SIZE 20

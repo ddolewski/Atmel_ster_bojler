@@ -192,3 +192,4 @@ void PCF8563_WriteTime(time_complex_t * xTime)
 	TWI_Write(miscBin2bcd(time.year));
 	TWI_Stop();
 }
+

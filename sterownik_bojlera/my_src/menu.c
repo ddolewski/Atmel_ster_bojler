@@ -17,7 +17,7 @@
 #include <stdlib.h>
 //////////////////////////////////////////////////////////////////
 static systime_t readSwitchTimer = 0;
-static systime_t menuReadTimer = 0;
+//static systime_t menuReadTimer = 0;
 static uint8_t readFirstParam = 0;
 
 static volatile int8_t xMenuType = MENU_FIRST_POSITION;
@@ -52,16 +52,17 @@ static void menuManualTurnOn(bool_t xState);
 //////////////////////////////////////////////////////////////////
 void menuSwitchHandler(void)
 {
-	if (systimeTimeoutControl(&readSwitchTimer, 200))
+	if (systimeTimeoutControl(&readSwitchTimer, 400))
 	{
 		menuSwitchFunc();
+		menuFunctionHandler();
 	}
 }
 //////////////////////////////////////////////////////////////////
 void menuFunctionHandler(void)
 {
-	if (systimeTimeoutControl(&menuReadTimer, 50))
-	{
+	//if (systimeTimeoutControl(&menuReadTimer, 200))
+	//{
 		if (menuActive == TRUE)
 		{
 			if (xSwitchFunc == SWITCH_FUNC_NAVI)
@@ -291,7 +292,7 @@ void menuFunctionHandler(void)
 				break;
 			}
 		}
-	}
+	//}
 }
 //////////////////////////////////////////////////////////////////
 void menuSwitchFunc(void)
@@ -1122,7 +1123,7 @@ static void menuDelete(void)
 	LCD_GoTo(0,1);
 	LCD_WriteTextP((char*)pgm_read_word(&stringLcd[34]));
 	
-	programDeleteProgram();
+	programDeleteEEPROM();
 	
 	systimeDelayMs(2000);
 	

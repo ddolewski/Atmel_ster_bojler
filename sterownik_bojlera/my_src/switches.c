@@ -31,7 +31,7 @@ uint8_t switchesReadState(pin_t xSwitchNum)
 		case PIN_MENU:
 			if ((PIND & SWITCH_MENU_PIN_MASK) == 0)
 			{
-				systimeDelayMs(25);
+				systimeDelayMs(50);
 				if ((PIND & SWITCH_MENU_PIN_MASK) == 0)
 				{
 					pinState = RESET;
@@ -51,7 +51,7 @@ uint8_t switchesReadState(pin_t xSwitchNum)
 		case PIN_OK:
 			if ((PIND & SWITCH_OK_PIN_MASK) == 0)
 			{
-				systimeDelayMs(25);
+				systimeDelayMs(50);
 				if ((PIND & SWITCH_OK_PIN_MASK) == 0)
 				{
 					pinState = RESET;
@@ -71,7 +71,7 @@ uint8_t switchesReadState(pin_t xSwitchNum)
 		case PIN_UP:
 			if ((PIND & SWITCH_UP_PIN_MASK) == 0)
 			{
-				systimeDelayMs(25);
+				systimeDelayMs(50);
 				if ((PIND & SWITCH_UP_PIN_MASK) == 0)
 				{
 					pinState = RESET;
@@ -91,7 +91,7 @@ uint8_t switchesReadState(pin_t xSwitchNum)
 		case PIN_DOWN:
 			if ((PIND & SWITCH_DOWN_PIN_MASK) == 0)
 			{
-				systimeDelayMs(25);
+				systimeDelayMs(50);
 				if ((PIND & SWITCH_DOWN_PIN_MASK) == 0)
 				{
 					pinState = RESET;

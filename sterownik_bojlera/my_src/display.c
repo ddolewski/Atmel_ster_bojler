@@ -172,31 +172,26 @@ void displayShowPage(lcdDisplayData_t * display)
 	////////////////////////////////////////////////////////////////////////////////
 				LCD_GoTo(0,0);
 				
-				if (localTime.wday >= tariffBuff[0].weekDayFrom		&&
-					localTime.wday <= tariffBuff[0].weekDayTo		&&
-					localTime.hour >= tariffBuff[0].hourOn			&&
-					localTime.hour < tariffBuff[0].hourOff			&&
-					localTime.hour >= programCopy1.hourOn)
+				if (localTime.wday >= 0		&&
+					localTime.wday <= 4		&&
+					localTime.hour >= 13	&&
+					localTime.hour < 15)
 				{
-					UART_PutString(SC"T0\n\r");
+					//UART_PutString(SC"T0\n\r");
 					LCD_WriteTextP((char*)pgm_read_word(&stringLcd[23]));
 				}	
-				else if (localTime.wday >= tariffBuff[1].weekDayFrom	&&
-						 localTime.wday <= tariffBuff[1].weekDayTo		&&
-						 localTime.hour >= tariffBuff[1].hourOn			&&
-						 localTime.hour < tariffBuff[1].hourOff			&&
-						 localTime.hour >= programCopy1.hourOn)
+				else if (localTime.wday >= 0	&&
+						localTime.wday <= 4		&&
+						(localTime.hour == 22 || localTime.hour == 23	|| (localTime.hour >= 0 && localTime.hour < 6) ))
 				{
-					UART_PutString(SC"T1\n\r");
+					//UART_PutString(SC"T1\n\r");
 					LCD_WriteTextP((char*)pgm_read_word(&stringLcd[22]));
 				}
-				else if (localTime.wday >= tariffBuff[2].weekDayFrom	&&
-						 localTime.wday <= tariffBuff[2].weekDayTo		&&
-						 localTime.hour >= tariffBuff[2].hourOn			&&
-						 localTime.hour < tariffBuff[2].hourOff			&&
-						 localTime.hour >= programCopy1.hourOn)
+				else if ((localTime.wday == 4 && (localTime.hour == 22 || localTime.hour == 23)) ||
+						 localTime.wday == 5 || localTime.wday == 6 ||
+						(localTime.wday == 0 && (localTime.hour >= 0 || localTime.hour < 6)))
 				{
-					UART_PutString(SC"T2\n\r");
+					//UART_PutString(SC"T2\n\r");
 					LCD_WriteTextP((char*)pgm_read_word(&stringLcd[21]));
 				}
 				else
