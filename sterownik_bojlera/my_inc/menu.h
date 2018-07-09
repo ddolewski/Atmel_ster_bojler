@@ -73,7 +73,7 @@ typedef enum
 volatile uint8_t menuActive;
 char timeStr[50];
 
-void menuSwitchHandler(void);
+void menuHandler(void);
 void menuFunctionHandler(void);
 void menuSwitchFunc(void);
 

@@ -18,6 +18,13 @@ static systime_t displayTimer = 0;
 static systime_t pageTimer = 0;
 //static uint8_t waitForChangeState = FALSE;
 //////////////////////////////////////////////////////////////////
+void displayHandler(void)
+{
+	displayMainCounter(&dispDta);
+	displayChangePage(&dispDta);
+	displayShowPage(&dispDta);
+}
+//////////////////////////////////////////////////////////////////
 void displayMakeTimeString(char * TimeString, time_complex_t * xRtcTime)
 {
 	char houstr[5] = {0};
@@ -177,29 +184,28 @@ void displayShowPage(lcdDisplayData_t * display)
 					localTime.hour >= 13	&&
 					localTime.hour < 15)
 				{
-					//UART_PutString(SC"T0\n\r");
-					LCD_WriteTextP((char*)pgm_read_word(&stringLcd[23]));
+					UART_PutString(SC"T1\n\r");
+					LCD_WriteTextP((char*)pgm_read_word(&stringLcd[21]));
 				}	
 				else if (localTime.wday >= 0	&&
 						localTime.wday <= 4		&&
 						(localTime.hour == 22 || localTime.hour == 23	|| (localTime.hour >= 0 && localTime.hour < 6) ))
 				{
-					//UART_PutString(SC"T1\n\r");
+					UART_PutString(SC"T2\n\r");
 					LCD_WriteTextP((char*)pgm_read_word(&stringLcd[22]));
 				}
 				else if ((localTime.wday == 4 && (localTime.hour == 22 || localTime.hour == 23)) ||
 						 localTime.wday == 5 || localTime.wday == 6 ||
-						(localTime.wday == 0 && (localTime.hour >= 0 || localTime.hour < 6)))
+						(localTime.wday == 0 && (localTime.hour >= 0 && localTime.hour < 6)))
 				{
-					//UART_PutString(SC"T2\n\r");
-					LCD_WriteTextP((char*)pgm_read_word(&stringLcd[21]));
+					UART_PutString(SC"T3\n\r");
+					LCD_WriteTextP((char*)pgm_read_word(&stringLcd[23]));
 				}
 				else
 				{
 					LCD_WriteTextP((char*)pgm_read_word(&stringLcd[63]));
-					//UART_PutString(SC"nieznana taryfa\n\r");
+					UART_PutString(SC"nieznana taryfa\n\r");
 				}
-				
 				
 				if (programType < PROGRAM10)
 				{

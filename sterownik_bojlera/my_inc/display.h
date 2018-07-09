@@ -26,6 +26,7 @@ char timeString[20];
 char dateString[20];
 char weekDayString[20];
 
+void displayHandler(void);
 void displayMakeTimeString(char* TimeString, time_complex_t * rtc_time);
 void displayMakeDateString(char* xDateString, time_complex_t * xRtcDate);
 void displayWeekDayConvert(uint8_t xWeekDayNum, char * xStrDay);

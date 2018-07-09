@@ -28,9 +28,9 @@ const char string_17[] PROGMEM = "USTAW ROK      ";
 const char string_18[] PROGMEM = "DODAJ PROGRAM";
 const char string_19[] PROGMEM = "BOJLER WYL.";
 const char string_20[] PROGMEM = "BOJLER  WL.";
-const char string_21[] PROGMEM = "TARYFA 3";
+const char string_21[] PROGMEM = "TARYFA 1";
 const char string_22[] PROGMEM = "TARYFA 2";
-const char string_23[] PROGMEM = "TARYFA 1";
+const char string_23[] PROGMEM = "TARYFA 3";
 const char string_24[] PROGMEM = "Uruchamianie...";
 
 const char string_25[] PROGMEM = "  Poniedzialek  ";

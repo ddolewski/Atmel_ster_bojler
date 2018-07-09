@@ -28,7 +28,7 @@ static void programBoilerOn(bool_t xTurnOn);
 
 void programBoilerHandler(void)
 {
-	if (systimeTimeoutControl(&boilerTimer, 1000))
+	if (systimeTimeoutControl(&boilerTimer, 1000)) 
 	{
 		//manualne zalaczanie i wylaczanie dodac flage !
 		if (manualControl == TRUE)
@@ -45,38 +45,53 @@ void programBoilerHandler(void)
 		}
 		else
 		{
-			if ((programCopy1.hourOff != programCopy2.hourOff) && (programCopy1.hourOn != programCopy2.hourOn)) // programy nie moga byc takie same
+			UART_PutString("program1 warunek1\r\n");
+			UART_PutString("programCopy1.hourOff: ");
+			UART_PutInt(programCopy1.hourOff, 10);
+			UART_PutString("programCopy1.hourn: ");
+			UART_PutInt(programCopy1.hourOn, 10);
+			UART_PutString("programCopy2.hourOff: ");
+			UART_PutInt(programCopy2.hourOff, 10);
+			UART_PutString("programCopy2.hourn: ");
+			UART_PutInt(programCopy2.hourOn, 10);
+				
+			if (programCopy1.hourOff != programCopy1.hourOn) // godziny nie moga byc takie same(lub nie chcemy korzystac z programu)
 			{
 				if ((programCopy1.hourOn < programCopy1.hourOff) && (program2Active == FALSE)) // czas on i off musza byc rozne ( off wiekszy od on)
 				{
-					if ((localTime.hour >= programCopy1.hourOn)		&& 
-						(localTime.hour < programCopy1.hourOff)		&& 
-						(localTime.wday == programCopy1.weekDay))
+					UART_PutString("czekam na program1..\r\n");
+					if ((localTime.hour >= programCopy1.hourOn)		&&
+					(localTime.hour < programCopy1.hourOff)		&&
+					(localTime.wday == programCopy1.weekDay))
 					{
 						UART_PutString(SC"Wlaczam bojler (program1)\n\r");
 						programType = localTime.wday * 2;
 						xBoilerState = TURN_ON;
-						programBoilerOn(TRUE);	
-						program1Active = TRUE;					
+						programBoilerOn(TRUE);
+						program1Active = TRUE;
 					}
 					else
 					{
 						//if (program2Active == FALSE)
 						//{
-							program1Active = FALSE;
-							//UART_PutString(SC"Wylaczam bojler (program1)\n\r");
-							programType = PROGRAM_NONE;
-							xBoilerState = TURN_OFF;
-							programBoilerOn(FALSE);							
+						program1Active = FALSE;
+						//UART_PutString(SC"Wylaczam bojler (program1)\n\r");
+						programType = PROGRAM_NONE;
+						xBoilerState = TURN_OFF;
+						programBoilerOn(FALSE);
 						//}
 					}
 				}
-	
+			}
+
+			if (programCopy2.hourOff != programCopy2.hourOn)
+			{
 				if ((programCopy2.hourOn < programCopy2.hourOff) && (program1Active == FALSE))
 				{
+					UART_PutString("czekam na program2..\r\n");
 					if ((localTime.hour >= programCopy2.hourOn)		&&
-						(localTime.hour < programCopy2.hourOff)		&&
-						(localTime.wday == programCopy2.weekDay))
+					(localTime.hour < programCopy2.hourOff)		&&
+					(localTime.wday == programCopy2.weekDay))
 					{
 						UART_PutString(SC"Wlaczam bojler (program2)\n\r");
 						programType = localTime.wday * 2 + 1;
@@ -88,14 +103,14 @@ void programBoilerHandler(void)
 					{
 						//if (program1Active == FALSE)
 						//{
-							program2Active = FALSE;
-							//UART_PutString(SC"Wylaczam bojler (program2)\n\r");
-							programType = PROGRAM_NONE;
-							xBoilerState = TURN_OFF;
-							programBoilerOn(FALSE);							
+						program2Active = FALSE;
+						//UART_PutString(SC"Wylaczam bojler (program2)\n\r");
+						programType = PROGRAM_NONE;
+						xBoilerState = TURN_OFF;
+						programBoilerOn(FALSE);
 						//}
 					}
-				}			
+				}					
 			}
 		}		
 	}
@@ -105,13 +120,11 @@ static void programBoilerOn(bool_t xTurnOn)
 {
 	if (xTurnOn == TRUE)
 	{
-		//PORTD |= 1 << BOILER;
-		PORTD &= ~ (1 << BOILER);
+		PORTD |= 1 << BOILER;
 	}
 	else
 	{
-		//PORTD &= ~ (1 << BOILER);
-		PORTD |= 1 << BOILER;
+		PORTD &= ~ (1 << BOILER);
 	}
 }
 
@@ -126,21 +139,21 @@ void programReadProgramsPerDay(void)
 	programCopy1 = programBuff[program1Index];
 	programCopy2 = programBuff[program2Index];
 	
-	//UART_PutString(SC"Dzien tygodnia: ");
-	//UART_PutInt(weekDay, 10);
-	//
-	//UART_PutInt(program1Index,10);
-	//UART_PutInt(program2Index,10);
-	//
-	//UART_PutString(SC"Program1:\n\r");
-	//UART_PutInt(programCopy1.hourOn, 10);
-	//UART_PutInt(programCopy1.hourOff, 10);
-	//UART_PutInt(programCopy1.weekDay, 10);
-	//
-	//UART_PutString(SC"Program2:\n\r");
-	//UART_PutInt(programCopy2.hourOn, 10);
-	//UART_PutInt(programCopy2.hourOff, 10);
-	//UART_PutInt(programCopy2.weekDay, 10);
+	UART_PutString(SC"Dzien tygodnia: ");
+	UART_PutInt(weekDay, 10);
+	
+	UART_PutInt(program1Index,10);
+	UART_PutInt(program2Index,10);
+	
+	UART_PutString(SC"Program1:\n\r");
+	UART_PutInt(programCopy1.hourOn, 10);
+	UART_PutInt(programCopy1.hourOff, 10);
+	UART_PutInt(programCopy1.weekDay, 10);
+	
+	UART_PutString(SC"Program2:\n\r");
+	UART_PutInt(programCopy2.hourOn, 10);
+	UART_PutInt(programCopy2.hourOff, 10);
+	UART_PutInt(programCopy2.weekDay, 10);
 }
 
 void programReadConfiguration(config_type_t xConfigType)
@@ -187,13 +200,13 @@ void programReadConfiguration(config_type_t xConfigType)
 		for (uint8_t i = 0; i < 14; i++)
 		{
 			UART_PutString(SC"program ");
-			systimeDelayMs(20);
+			//systimeDelayMs(20);
 			UART_PutInt(i, 10);
-			systimeDelayMs(20);
+			//systimeDelayMs(20);
 			UART_PutInt(programBuff[i].hourOn, 10);
-			systimeDelayMs(20);
+			//systimeDelayMs(20);
 			UART_PutInt(programBuff[i].hourOff, 10);
-			systimeDelayMs(20);
+			//systimeDelayMs(20);
 			UART_PutInt(programBuff[i].weekDay, 10);
 		}
 	}

@@ -62,8 +62,8 @@ typedef enum
 volatile prog_time_t programBuff[14];
 volatile prog_time_t programNewBuffer[14];
 
-prog_time_t programCopy1;
-prog_time_t programCopy2;
+volatile prog_time_t programCopy1;
+volatile prog_time_t programCopy2;
 
 extern program_type_t programType;
 

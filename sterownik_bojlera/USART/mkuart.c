@@ -46,7 +46,6 @@ void UART_PutChar(uint8_t data)
 void UART_PutString(uint8_t *s)		// wysy³a ³añcuch z pamiêci RAM na UART
 {
 #ifdef DEBUG_GLOBAL
-
 	register char c;
 	while ((c = *s++))
 		UART_PutChar(c);			// dopóki nie napotkasz 0 wysy³aj znak
@@ -55,11 +54,13 @@ void UART_PutString(uint8_t *s)		// wysy³a ³añcuch z pamiêci RAM na UART
 
 void UART_PutInt(uint32_t value, uint8_t radix)	// wysy³a na port szeregowy tekst
 {
+#ifdef DEBUG_GLOBAL
 	char string[20];			// bufor na wynik funkcji itoa
 	itoa(value, string, radix);		// konwersja value na ASCII
 	//IntToStr(value, string);
 	UART_PutString(SC string);			// wyœlij string na port szeregowy
 	UART_PutString(SC "\n\r");
+#endif
 }
 
 // definiujemy procedurê obs³ugi przerwania nadawczego, pobieraj¹c¹ dane z bufora cyklicznego

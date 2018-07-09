@@ -17,7 +17,6 @@
 #include <stdlib.h>
 //////////////////////////////////////////////////////////////////
 static systime_t readSwitchTimer = 0;
-//static systime_t menuReadTimer = 0;
 static uint8_t readFirstParam = 0;
 
 static volatile int8_t xMenuType = MENU_FIRST_POSITION;
@@ -50,7 +49,7 @@ static void menuDelete(void);
 static void menuSave(void);
 static void menuManualTurnOn(bool_t xState);
 //////////////////////////////////////////////////////////////////
-void menuSwitchHandler(void)
+void menuHandler(void)
 {
 	if (systimeTimeoutControl(&readSwitchTimer, 400))
 	{
@@ -61,238 +60,235 @@ void menuSwitchHandler(void)
 //////////////////////////////////////////////////////////////////
 void menuFunctionHandler(void)
 {
-	//if (systimeTimeoutControl(&menuReadTimer, 200))
-	//{
-		if (menuActive == TRUE)
+	if (menuActive == TRUE)
+	{
+		if (xSwitchFunc == SWITCH_FUNC_NAVI)
 		{
-			if (xSwitchFunc == SWITCH_FUNC_NAVI)
-			{
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[0]));
-			}
-			switch (xMenuType)
-			{
-				case MENU_TIME_DATE:
-				menuTimeDate();
-				break;
-				
-				case MENU_TIME_DATE_SECOND:
-				menuSetSeconds(&localTime);
-				break;
-				
-				case MENU_TIME_DATE_MINUTE:
-				menuSetMinutes(&localTime);
-				break;
-				
-				case MENU_TIME_DATE_HOUR:
-				menuSetHours(&localTime);
-				break;
-				
-				case MENU_TIME_DATE_WEEKDAY:
-				menuSetWeekDays(&localTime);
-				break;
-				
-				case MENU_TIME_DATE_DAY:
-				menuSetDays(&localTime);
-				break;
-				
-				case MENU_TIME_DATE_MONTH:
-				menuSetMonths(&localTime);
-				break;
-				
-				case MENU_TIME_DATE_YEARS:
-				menuSetYears(&localTime);
-				break;
-				
-				case MENU_PROGRAM:
-				menuProgram();
-				break;
-				
-				case MENU_PROGRAM_MONDAY_ON_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[35]));
-				menuProgramHourOn(MENU_PROGRAM_MONDAY_OFF_HOUR);
-				break;
-				
-				case MENU_PROGRAM_MONDAY_OFF_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[37]));
-				menuProgramHourOff(MENU_PROGRAM_TUESDAY_ON_HOUR, MENU_PROGRAM_MONDAY_ON_HOUR);
-				break;
-
-				case MENU_PROGRAM_TUESDAY_ON_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[39]));
-				menuProgramHourOn(MENU_PROGRAM_TUESDAY_OFF_HOUR);
-				break;
-				
-				case MENU_PROGRAM_TUESDAY_OFF_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[41]));
-				menuProgramHourOff(MENU_PROGRAM_WEDNESDAY_ON_HOUR, MENU_PROGRAM_TUESDAY_ON_HOUR);
-				break;
-			
-				case MENU_PROGRAM_WEDNESDAY_ON_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[43]));
-				menuProgramHourOn(MENU_PROGRAM_WEDNESDAY_OFF_HOUR);
-				break;
-
-				case MENU_PROGRAM_WEDNESDAY_OFF_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[45]));
-				menuProgramHourOff(MENU_PROGRAM_THURSDAY_ON_HOUR, MENU_PROGRAM_WEDNESDAY_ON_HOUR);
-				break;
-
-				case MENU_PROGRAM_THURSDAY_ON_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[47]));
-				menuProgramHourOn(MENU_PROGRAM_THURSDAY_OFF_HOUR);
-				break;
-				
-				case MENU_PROGRAM_THURSDAY_OFF_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[49]));
-				menuProgramHourOff(MENU_PROGRAM_FRIDAY_ON_HOUR, MENU_PROGRAM_THURSDAY_ON_HOUR);
-				break;
-
-				case MENU_PROGRAM_FRIDAY_ON_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[51]));
-				menuProgramHourOn(MENU_PROGRAM_FRIDAY_OFF_HOUR);
-				break;
-				
-				case MENU_PROGRAM_FRIDAY_OFF_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[53]));
-				menuProgramHourOff(MENU_PROGRAM_SATURDAY_ON_HOUR, MENU_PROGRAM_FRIDAY_ON_HOUR);
-				break;
-				
-				case MENU_PROGRAM_SATURDAY_ON_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[55]));
-				menuProgramHourOn(MENU_PROGRAM_SATURDAY_OFF_HOUR);
-				break;
-
-				case MENU_PROGRAM_SATURDAY_OFF_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[57]));
-				menuProgramHourOff(MENU_PROGRAM_SUNDAY_ON_HOUR, MENU_PROGRAM_SATURDAY_ON_HOUR);
-				break;
-
-				case MENU_PROGRAM_SUNDAY_ON_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[59]));
-				menuProgramHourOn(MENU_PROGRAM_SUNDAY_OFF_HOUR);
-				break;
-
-				case MENU_PROGRAM_SUNDAY_OFF_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[61]));
-				menuProgramHourOff(MENU_SAVE, MENU_PROGRAM_SUNDAY_ON_HOUR);
-				break;
-																							
-				case MENU_DELETE_PROGRAMS:
-				menuDelAllProg();
-				break;
-			
-				case MENU_DELETE_CLEAR_EEPROM:
-				menuDelete();
-				break;
-
-				case MENU_TARIFF:
-				menuTariff();
-				break;
-				
-				case MENU_TARIFF1_ON_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[65]));
-				menuTariffOnHour(MENU_TARIFF1_OFF_HOUR, 0);
-				break;
-		
-				case MENU_TARIFF1_OFF_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[66]));				
-				menuTariffOffHour(MENU_TARIFF1_WEEKDAY_FROM, 1);
-				break;
-
-				case MENU_TARIFF1_WEEKDAY_FROM:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[71]));
-				menuTariffWeekday(MENU_TARIFF1_WEEKDAY_TO, 2);
-				break;
-
-				case MENU_TARIFF1_WEEKDAY_TO:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[72]));
-				menuTariffWeekday(MENU_TARIFF2_ON_HOUR, 3);
-				break;
-								
-				case MENU_TARIFF2_ON_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[67]));
-				menuTariffOnHour(MENU_TARIFF2_OFF_HOUR, 4);
-				break;
-				
-				case MENU_TARIFF2_OFF_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[68]));
-				menuTariffOffHour(MENU_TARIFF2_WEEKDAY_FROM, 5);
-				break;
-
-				case MENU_TARIFF2_WEEKDAY_FROM:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[73]));
-				menuTariffWeekday(MENU_TARIFF2_WEEKDAY_TO, 6);
-				break;
-
-				case MENU_TARIFF2_WEEKDAY_TO:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[74]));
-				menuTariffWeekday(MENU_TARIFF3_ON_HOUR, 7);
-				break;
-				
-				case MENU_TARIFF3_ON_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[69]));
-				menuTariffOnHour(MENU_TARIFF3_OFF_HOUR, 8);
-				break;
-				
-				case MENU_TARIFF3_OFF_HOUR:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[70]));
-				menuTariffOffHour(MENU_TARIFF3_WEEKDAY_FROM, 9);
-				break;
-
-				case MENU_TARIFF3_WEEKDAY_FROM:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[75]));
-				menuTariffWeekday(MENU_TARIFF3_WEEKDAY_TO, 10);
-				break;
-
-				case MENU_TARIFF3_WEEKDAY_TO:
-				LCD_GoTo(0,0);
-				LCD_WriteTextP((char*)pgm_read_word(&stringLcd[76]));
-				menuTariffWeekday(MENU_SAVE, 11);
-				break;
-				
-				case MENU_MANUAL_ON:
-				menuManualTurnOn(TRUE);
-				break;
-				
-				case MENU_MANUAL_OFF:
-				menuManualTurnOn(FALSE);
-				break;
-																						
-				case MENU_SAVE:
-				menuSave();
-				break;
-				
-				default:
-				break;
-			}
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[0]));
 		}
-	//}
+		switch (xMenuType)
+		{
+			case MENU_TIME_DATE:
+			menuTimeDate();
+			break;
+				
+			case MENU_TIME_DATE_SECOND:
+			menuSetSeconds(&localTime);
+			break;
+				
+			case MENU_TIME_DATE_MINUTE:
+			menuSetMinutes(&localTime);
+			break;
+				
+			case MENU_TIME_DATE_HOUR:
+			menuSetHours(&localTime);
+			break;
+				
+			case MENU_TIME_DATE_WEEKDAY:
+			menuSetWeekDays(&localTime);
+			break;
+				
+			case MENU_TIME_DATE_DAY:
+			menuSetDays(&localTime);
+			break;
+				
+			case MENU_TIME_DATE_MONTH:
+			menuSetMonths(&localTime);
+			break;
+				
+			case MENU_TIME_DATE_YEARS:
+			menuSetYears(&localTime);
+			break;
+				
+			case MENU_PROGRAM:
+			menuProgram();
+			break;
+				
+			case MENU_PROGRAM_MONDAY_ON_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[35]));
+			menuProgramHourOn(MENU_PROGRAM_MONDAY_OFF_HOUR);
+			break;
+				
+			case MENU_PROGRAM_MONDAY_OFF_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[37]));
+			menuProgramHourOff(MENU_PROGRAM_TUESDAY_ON_HOUR, MENU_PROGRAM_MONDAY_ON_HOUR);
+			break;
+
+			case MENU_PROGRAM_TUESDAY_ON_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[39]));
+			menuProgramHourOn(MENU_PROGRAM_TUESDAY_OFF_HOUR);
+			break;
+				
+			case MENU_PROGRAM_TUESDAY_OFF_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[41]));
+			menuProgramHourOff(MENU_PROGRAM_WEDNESDAY_ON_HOUR, MENU_PROGRAM_TUESDAY_ON_HOUR);
+			break;
+			
+			case MENU_PROGRAM_WEDNESDAY_ON_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[43]));
+			menuProgramHourOn(MENU_PROGRAM_WEDNESDAY_OFF_HOUR);
+			break;
+
+			case MENU_PROGRAM_WEDNESDAY_OFF_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[45]));
+			menuProgramHourOff(MENU_PROGRAM_THURSDAY_ON_HOUR, MENU_PROGRAM_WEDNESDAY_ON_HOUR);
+			break;
+
+			case MENU_PROGRAM_THURSDAY_ON_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[47]));
+			menuProgramHourOn(MENU_PROGRAM_THURSDAY_OFF_HOUR);
+			break;
+				
+			case MENU_PROGRAM_THURSDAY_OFF_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[49]));
+			menuProgramHourOff(MENU_PROGRAM_FRIDAY_ON_HOUR, MENU_PROGRAM_THURSDAY_ON_HOUR);
+			break;
+
+			case MENU_PROGRAM_FRIDAY_ON_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[51]));
+			menuProgramHourOn(MENU_PROGRAM_FRIDAY_OFF_HOUR);
+			break;
+				
+			case MENU_PROGRAM_FRIDAY_OFF_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[53]));
+			menuProgramHourOff(MENU_PROGRAM_SATURDAY_ON_HOUR, MENU_PROGRAM_FRIDAY_ON_HOUR);
+			break;
+				
+			case MENU_PROGRAM_SATURDAY_ON_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[55]));
+			menuProgramHourOn(MENU_PROGRAM_SATURDAY_OFF_HOUR);
+			break;
+
+			case MENU_PROGRAM_SATURDAY_OFF_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[57]));
+			menuProgramHourOff(MENU_PROGRAM_SUNDAY_ON_HOUR, MENU_PROGRAM_SATURDAY_ON_HOUR);
+			break;
+
+			case MENU_PROGRAM_SUNDAY_ON_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[59]));
+			menuProgramHourOn(MENU_PROGRAM_SUNDAY_OFF_HOUR);
+			break;
+
+			case MENU_PROGRAM_SUNDAY_OFF_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[61]));
+			menuProgramHourOff(MENU_SAVE, MENU_PROGRAM_SUNDAY_ON_HOUR);
+			break;
+																							
+			case MENU_DELETE_PROGRAMS:
+			menuDelAllProg();
+			break;
+			
+			case MENU_DELETE_CLEAR_EEPROM:
+			menuDelete();
+			break;
+
+			case MENU_TARIFF:
+			menuTariff();
+			break;
+				
+			case MENU_TARIFF1_ON_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[65]));
+			menuTariffOnHour(MENU_TARIFF1_OFF_HOUR, 0);
+			break;
+		
+			case MENU_TARIFF1_OFF_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[66]));				
+			menuTariffOffHour(MENU_TARIFF1_WEEKDAY_FROM, 1);
+			break;
+
+			case MENU_TARIFF1_WEEKDAY_FROM:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[71]));
+			menuTariffWeekday(MENU_TARIFF1_WEEKDAY_TO, 2);
+			break;
+
+			case MENU_TARIFF1_WEEKDAY_TO:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[72]));
+			menuTariffWeekday(MENU_TARIFF2_ON_HOUR, 3);
+			break;
+								
+			case MENU_TARIFF2_ON_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[67]));
+			menuTariffOnHour(MENU_TARIFF2_OFF_HOUR, 4);
+			break;
+				
+			case MENU_TARIFF2_OFF_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[68]));
+			menuTariffOffHour(MENU_TARIFF2_WEEKDAY_FROM, 5);
+			break;
+
+			case MENU_TARIFF2_WEEKDAY_FROM:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[73]));
+			menuTariffWeekday(MENU_TARIFF2_WEEKDAY_TO, 6);
+			break;
+
+			case MENU_TARIFF2_WEEKDAY_TO:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[74]));
+			menuTariffWeekday(MENU_TARIFF3_ON_HOUR, 7);
+			break;
+				
+			case MENU_TARIFF3_ON_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[69]));
+			menuTariffOnHour(MENU_TARIFF3_OFF_HOUR, 8);
+			break;
+				
+			case MENU_TARIFF3_OFF_HOUR:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[70]));
+			menuTariffOffHour(MENU_TARIFF3_WEEKDAY_FROM, 9);
+			break;
+
+			case MENU_TARIFF3_WEEKDAY_FROM:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[75]));
+			menuTariffWeekday(MENU_TARIFF3_WEEKDAY_TO, 10);
+			break;
+
+			case MENU_TARIFF3_WEEKDAY_TO:
+			LCD_GoTo(0,0);
+			LCD_WriteTextP((char*)pgm_read_word(&stringLcd[76]));
+			menuTariffWeekday(MENU_SAVE, 11);
+			break;
+				
+			case MENU_MANUAL_ON:
+			menuManualTurnOn(TRUE);
+			break;
+				
+			case MENU_MANUAL_OFF:
+			menuManualTurnOn(FALSE);
+			break;
+																						
+			case MENU_SAVE:
+			menuSave();
+			break;
+				
+			default:
+			break;
+		}
+	}
 }
 //////////////////////////////////////////////////////////////////
 void menuSwitchFunc(void)

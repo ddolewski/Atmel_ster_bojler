@@ -47,6 +47,7 @@ typedef struct
 	uint32_t secAbsDiff;
 }time_compare_result_t;
 
+void timeHandler(void);
 uint8_t timeLeapYearCheck(uint16_t year_to_test);
 void timeTimestampToTime(uint32_t xTimestamp, time_complex_t * xTime);
 void timeTimeToTimestamp(const time_complex_t * xTime, uint32_t * xTimestamp);

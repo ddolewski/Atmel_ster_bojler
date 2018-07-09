@@ -12,7 +12,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdint.h>
-#define DEBUG_GLOBAL
+//#define DEBUG_GLOBAL
 #ifdef DEBUG_GLOBAL
 	//#define DISPLAY_PAGE1_TEST
 	//#define DISPLAY_PAGE2_TEST

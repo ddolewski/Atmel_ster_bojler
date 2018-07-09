@@ -15,44 +15,29 @@ static void Peripheral_Init(void);
 void testTimeStamps(void);
 /////////////////////////////////////////////////////////////////////////////////////////////
 static systime_t readRtcTimer = 0;
-static time_complex_t rtcUtcTime;
+static time_complex_t rtcUtcTime = {0,0,0,0,0,0,0};
 /////////////////////////////////////////////////////////////////////////////////////////////
 int main(void)
 {
+	
 	Peripheral_Init();
 	//programDeleteEEPROM(); //test
-		programCopy1.hourOn = 13;
-		programCopy1.hourOff = 15;
-		programCopy1.weekDay = 5;
-		
-		programCopy2.hourOn = 20;
-		programCopy2.hourOff = 22;
-		programCopy2.weekDay = 5;
+	//programCopy1.hourOn = 20;
+	//programCopy1.hourOff = 21;
+	//programCopy1.weekDay = 0;
+	//
+	//programCopy2.hourOn = 22;
+	//programCopy2.hourOff = 23;
+	//programCopy2.weekDay = 0;
     while (ALWAYS) 
     {
-		if (systimeTimeoutControl(&readRtcTimer, 500))
-		{
-			PCF8563_ReadTime(&rtcUtcTime);
-			timeUtcToLocalConv(&rtcUtcTime, &localTime);
-			displayMakeTimeString(timeString, &localTime);
-			displayMakeDateString(dateString, &localTime);
-			displayWeekDayConvert(localTime.wday, weekDayString);
-			if (localTime.hour == 0 && localTime.min == 0 && localTime.sec == 0) // co zmiane dnia wczytaj na nowo programy 
-			{
-				programReadProgramsPerDay();
-			}
-		}
-			
-		displayMainCounter(&dispDta);
-		displayChangePage(&dispDta);
-		displayShowPage(&dispDta);
-		
-		menuSwitchHandler();
-		//menuFunctionHandler();
+		timeHandler();
+		displayHandler();
+		menuHandler();
 		programBoilerHandler();
 		
 #ifdef DEBUG_SYSTIME
-		//systimeDelayMs(1000);
+		systimeDelayMs(1000);
 		PORTD ^= 1 << BOILER;
 		UART_PutString("TEST I/O\n\r");
 #endif
@@ -60,18 +45,33 @@ int main(void)
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
+void timeHandler(void)
+{
+	if (systimeTimeoutControl(&readRtcTimer, 500))
+	{
+		PCF8563_ReadTime(&rtcUtcTime);
+		timeUtcToLocalConv(&rtcUtcTime, &localTime);
+		displayMakeTimeString(timeString, &localTime);
+		displayMakeDateString(dateString, &localTime);
+		displayWeekDayConvert(localTime.wday, weekDayString);
+		if (localTime.hour == 0 && localTime.min == 0 && localTime.sec == 0) // co zmiane dnia wczytaj na nowo programy
+		{
+			programReadProgramsPerDay();
+		}
+	}
+}
+/////////////////////////////////////////////////////////////////////////////////////////////
 static void boilerInit(void)
 {
 	DDRD |= (1 << BOILER);	//jako wyjscie
-	//PORTD &= ~ (1 << BOILER);
-	PORTD |= (1 << BOILER);
+	PORTD &= ~ (1 << BOILER);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 static void Peripheral_Init(void)
 {
 	sei();
+	boilerInit();
 	systimeInit();
-	
 	LCD_Initialize();
 	LCD_Clear();
 	LCD_GoTo(0,0);
@@ -80,26 +80,11 @@ static void Peripheral_Init(void)
 	USART_Init(__UBRR);
 
 	programReadConfiguration(CONFIG_PROGRAMS);
-	//programReadConfiguration(CONFIG_TARIFF);
-	//manualControl = programReadMode();
-	
-	//if (xBoilerState != TURN_OFF && xBoilerState != TURN_ON)
-	//{
-		//xBoilerState = TURN_OFF;
-		//UART_PutString("xBoilerState != TRUE && xBoilerState != FALSE\r\n");
-	//}
-	
-	//if (manualControl == 255)
-	//{
-		//manualControl = FALSE;
-		//UART_PutString("manualControl = 255\r\n");
-	//}
 	
 	SCL_SDA_High;
 	TWI_Init(200);
 	PCF8563_Init();
 
-	boilerInit();
 	switchesInit();
 	
 	PCF8563_ReadTime(&rtcUtcTime);
@@ -112,29 +97,6 @@ static void Peripheral_Init(void)
 	
 	xBoilerState = TURN_OFF;
 	manualControl = FALSE;
-	
-	//tariffBuff[0].hourOff = 15;
-	//tariffBuff[0].hourOn = 13;
-	//tariffBuff[0].weekDayFrom = 0;
-	//tariffBuff[0].weekDayTo = 4;
-	//
-	//tariffBuff[1].hourOff = 6;
-	//tariffBuff[1].hourOn = 22;
-	//tariffBuff[1].weekDayFrom = 0;
-	//tariffBuff[1].weekDayTo = 4;
-	//
-	//tariffBuff[2].hourOff = 6;
-	//tariffBuff[2].hourOn = 22;
-	//tariffBuff[2].weekDayFrom = 4;
-	//tariffBuff[2].weekDayTo = 0;
-	//
-	//programCopy1.hourOn = 13;
-	//programCopy1.hourOff = 15;
-	//programCopy1.weekDay = 5;
-	//
-	//programCopy2.hourOn = 20;
-	//programCopy2.hourOff = 22;
-	//programCopy2.weekDay = 5;
 	
 	dispDta.page = 2;
 	dispDta.pageCounter = 0;
